@@ -16,13 +16,13 @@ export const verifyAccountOwnership = async (req, res, next) => {
             return next();
         }
         else {
-            throw new AppError('Account ID not provided.', 400);
+            throw new AppError('ID da conta não fornecido.', 400);
         }
 
         const account = await getAccountById(accountId, loggedInUserId);
         
         if (!account) {
-            throw new AppError('Account not found or unauthorized.', 404);
+            throw new AppError('Conta não encontrada ou não autorizada.', 404);
         }
 
         req.account = account;
@@ -31,7 +31,7 @@ export const verifyAccountOwnership = async (req, res, next) => {
         if (error instanceof AppError) {
             next(error);
         } else {
-            next(new AppError('Error verifying account ownership.', 500));
+            next(new AppError('Erro ao verificar propriedade da conta.', 500));
         }
     }
 }; 
