@@ -6,12 +6,12 @@ export const registerUser = async (userData) => {
     const { email, password, name } = userData;
 
     if (!email || !password) {
-        throw new AppError('Email and password are required.', 400);
+        throw new AppError('Email e senha são obrigatórios.', 400);
     }
 
     const existingUser = await findUserByEmail(email);
     if (existingUser) {
-        throw new AppError('Email is already registered.', 409);
+        throw new AppError('Este email já está cadastrado.', 409);
     }
 
     const hashedPassword = await hashPassword(password);
@@ -29,7 +29,7 @@ export const registerUser = async (userData) => {
 export const getUserById = async (id) => {
     const user = await findUserByIdRepo(id);
     if (!user) {
-        throw new AppError('User not found.', 404);
+        throw new AppError('Usuário não encontrado.', 404);
     }
     return user;
 };

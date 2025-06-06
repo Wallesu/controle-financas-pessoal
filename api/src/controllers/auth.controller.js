@@ -7,7 +7,7 @@ export const login = async (req, res, next) => {
         const result = await loginUser(email, password);
 
         res.status(200).json({
-            status: 'success',
+            status: 'sucesso',
             data: result
         });
     } catch (error) {
@@ -21,7 +21,7 @@ export const register = async (req, res, next) => {
         const newUser = await registerUser({ email, password, name });
 
         res.status(201).json({
-            status: 'success',
+            status: 'sucesso',
             data: {
                 user: newUser
             }
