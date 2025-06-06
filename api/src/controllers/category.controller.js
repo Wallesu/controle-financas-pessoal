@@ -18,7 +18,7 @@ export const createCategoryHandler = async (req, res, next) => {
 
         const category = await createCategory(userId, req.body);
         res.status(201).json({
-            status: 'success',
+            status: 'sucesso',
             data: category
         });
     } catch (error) {
@@ -31,7 +31,7 @@ export const getAllCategoriesHandler = async (req, res, next) => {
         const userId = req.user.ID;
         const categories = await getAllCategories(userId);
         res.status(200).json({
-            status: 'success',
+            status: 'sucesso',
             data: categories
         });
     } catch (error) {
@@ -45,7 +45,7 @@ export const getCategoryByIdHandler = async (req, res, next) => {
         const categoryId = parseInt(req.params.id);
         
         if (isNaN(categoryId)) {
-            throw new AppError('Invalid category ID.', 400);
+            throw new AppError('ID da categoria inválido.', 400);
         }
 
         const category = await getCategoryById(categoryId, userId);
@@ -54,7 +54,7 @@ export const getCategoryByIdHandler = async (req, res, next) => {
         }
 
         res.status(200).json({
-            status: 'success',
+            status: 'sucesso',
             data: category
         });
     } catch (error) {
@@ -68,7 +68,7 @@ export const updateCategoryHandler = async (req, res, next) => {
         const categoryId = parseInt(req.params.id);
         
         if (isNaN(categoryId)) {
-            throw new AppError('Invalid category ID.', 400);
+            throw new AppError('ID da categoria inválido.', 400);
         }
 
         if (!req.body || !req.body.name) {
@@ -81,7 +81,7 @@ export const updateCategoryHandler = async (req, res, next) => {
         }
 
         res.status(200).json({
-            status: 'success',
+            status: 'sucesso',
             data: category
         });
     } catch (error) {
@@ -95,13 +95,13 @@ export const deleteCategoryHandler = async (req, res, next) => {
         const categoryId = parseInt(req.params.id);
         
         if (isNaN(categoryId)) {
-            throw new AppError('Invalid category ID.', 400);
+            throw new AppError('ID da categoria inválido.', 400);
         }
 
-        const result = await deleteCategory(categoryId, userId);
-        res.status(200).json({
-            status: 'success',
-            data: result
+        await deleteCategory(categoryId, userId);
+        res.status(204).json({
+            status: 'sucesso',
+            data: null
         });
     } catch (error) {
         next(error);

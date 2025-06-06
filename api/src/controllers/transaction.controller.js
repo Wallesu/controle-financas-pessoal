@@ -39,7 +39,7 @@ export const createTransactionHandler = async (req, res, next) => {
 
         const transaction = await createTransaction(userId, transactionData);
         res.status(201).json({
-            status: 'success',
+            status: 'sucesso',
             data: transaction
         });
     } catch (error) {
@@ -53,12 +53,12 @@ export const getAccountTransactionsHandler = async (req, res, next) => {
         const accountId = parseInt(req.params.accountId);
         
         if (isNaN(accountId)) {
-            throw new AppError('Invalid account ID.', 400);
+            throw new AppError('ID da conta inválido.', 400);
         }
 
         const transactions = await getAccountTransactions(accountId, userId);
         res.status(200).json({
-            status: 'success',
+            status: 'sucesso',
             data: transactions
         });
     } catch (error) {
@@ -72,12 +72,12 @@ export const getTransactionByIdHandler = async (req, res, next) => {
         const transactionId = parseInt(req.params.id);
         
         if (isNaN(transactionId)) {
-            throw new AppError('Invalid transaction ID.', 400);
+            throw new AppError('ID da transação inválido.', 400);
         }
 
         const transaction = await getTransactionById(transactionId, userId);
         res.status(200).json({
-            status: 'success',
+            status: 'sucesso',
             data: transaction
         });
     } catch (error) {
@@ -91,12 +91,12 @@ export const updateTransactionHandler = async (req, res, next) => {
         const transactionId = parseInt(req.params.id);
         
         if (isNaN(transactionId)) {
-            throw new AppError('Invalid transaction ID.', 400);
+            throw new AppError('ID da transação inválido.', 400);
         }
 
         const transaction = await updateTransaction(transactionId, userId, req.body);
         res.status(200).json({
-            status: 'success',
+            status: 'sucesso',
             data: transaction
         });
     } catch (error) {
@@ -110,13 +110,13 @@ export const deleteTransactionHandler = async (req, res, next) => {
         const transactionId = parseInt(req.params.id);
         
         if (isNaN(transactionId)) {
-            throw new AppError('Invalid transaction ID.', 400);
+            throw new AppError('ID da transação inválido.', 400);
         }
 
-        const result = await deleteTransaction(transactionId, userId);
-        res.status(200).json({
-            status: 'success',
-            data: result
+        await deleteTransaction(transactionId, userId);
+        res.status(204).json({
+            status: 'sucesso',
+            data: null
         });
     } catch (error) {
         next(error);
@@ -126,15 +126,16 @@ export const deleteTransactionHandler = async (req, res, next) => {
 export const getTransactionsByPeriodHandler = async (req, res, next) => {
     try {
         const userId = req.user.ID;
+        const accountId = parseInt(req.params.accountId);
         const { startDate, endDate } = req.query;
-
-        if (!startDate || !endDate) {
-            throw new AppError('Start date and end date are required.', 400);
+        
+        if (isNaN(accountId)) {
+            throw new AppError('ID da conta inválido.', 400);
         }
 
-        const transactions = await getTransactionsByPeriod(userId, startDate, endDate);
+        const transactions = await getTransactionsByPeriod(accountId, userId, startDate, endDate);
         res.status(200).json({
-            status: 'success',
+            status: 'sucesso',
             data: transactions
         });
     } catch (error) {

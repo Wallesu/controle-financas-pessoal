@@ -11,16 +11,16 @@ export const createCategory = async (userId, categoryData) => {
     const { name } = categoryData;
 
     if (!name) {
-        throw new AppError('Category name is required.', 400);
+        throw new AppError('Nome da categoria é obrigatório.', 400);
     }
 
     try {
         return await createCategoryRepo(userId, name);
     } catch (error) {
         if (error.message.includes('already exists')) {
-            throw new AppError(error.message, 409);
+            throw new AppError('Já existe uma categoria com este nome.', 409);
         }
-        throw new AppError('Error creating category.', 500);
+        throw new AppError('Erro ao criar categoria.', 500);
     }
 };
 
@@ -28,7 +28,7 @@ export const getAllCategories = async (userId) => {
     try {
         return await getCategoriesByUserId(userId);
     } catch (error) {
-        throw new AppError('Error fetching categories.', 500);
+        throw new AppError('Erro ao buscar categorias.', 500);
     }
 };
 
@@ -36,12 +36,12 @@ export const getCategoryById = async (categoryId, userId) => {
     try {
         const category = await getCategoryByIdRepo(categoryId, userId);
         if (!category) {
-            throw new AppError('Category not found.', 404);
+            throw new AppError('Categoria não encontrada.', 404);
         }
         return category;
     } catch (error) {
         if (error instanceof AppError) throw error;
-        throw new AppError('Error fetching category.', 500);
+        throw new AppError('Erro ao buscar categoria.', 500);
     }
 };
 
@@ -49,21 +49,21 @@ export const updateCategory = async (categoryId, userId, updateData) => {
     const { name } = updateData;
 
     if (!name) {
-        throw new AppError('Category name is required for update.', 400);
+        throw new AppError('Nome da categoria é obrigatório.', 400);
     }
 
     try {
         const updatedCategory = await updateCategoryRepo(categoryId, userId, name);
         if (!updatedCategory) {
-            throw new AppError('Category not found.', 404);
+            throw new AppError('Categoria não encontrada.', 404);
         }
         return updatedCategory;
     } catch (error) {
         if (error instanceof AppError) throw error;
         if (error.message.includes('already exists')) {
-            throw new AppError(error.message, 409);
+            throw new AppError('Já existe uma categoria com este nome.', 409);
         }
-        throw new AppError('Error updating category.', 500);
+        throw new AppError('Erro ao atualizar categoria.', 500);
     }
 };
 
@@ -71,11 +71,11 @@ export const deleteCategory = async (categoryId, userId) => {
     try {
         const result = await deleteCategoryRepo(categoryId, userId);
         if (!result) {
-            throw new AppError('Category not found.', 404);
+            throw new AppError('Categoria não encontrada.', 404);
         }
-        return { message: 'Category deleted successfully.' };
+        return { message: 'Categoria excluída com sucesso.' };
     } catch (error) {
         if (error instanceof AppError) throw error;
-        throw new AppError('Error deleting category.', 500);
+        throw new AppError('Erro ao excluir categoria.', 500);
     }
 }; 
