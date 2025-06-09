@@ -1,18 +1,47 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
+import Login from './views/Login';
+import Register from './views/Register';
+import { PrivateRoute } from './components/PrivateRoute';
 import Home from './views/Home';
 import Dashboard from './views/Dashboard';
+import Accounts from './views/Accounts';
+import Transactions from './views/Transactions';
 
-const App: React.FC = () => {
+console.log('App component rendering'); // Debug log
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+  },
+});
+
+function App() {
+  console.log('App component mounted'); // Debug log
+
   return (
-    <Router>
-      <div className="App">
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          {/* Rotas públicas */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          {/* Rotas protegidas */}
+          <Route element={<PrivateRoute />}>
+            <Route path="/accounts" element={<Accounts />} />
+            <Route path="/accounts/:accountId/transactions" element={<Transactions />} />
+            <Route path="/accounts/:accountId/dashboard" element={<Dashboard />} />
+          </Route>
+
+          {/* Redirecionamento padrão */}
+          <Route path="/" element={<Navigate to="/accounts" replace />} />
         </Routes>
-      </div>
-    </Router>
+      </Router>
+    </ThemeProvider>
   );
 }
 

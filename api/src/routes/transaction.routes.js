@@ -12,20 +12,16 @@ import { verifyTransactionAccess } from '../middleware/transactionAuth.middlewar
 
 const router = express.Router();
 
-router.use(protect);
-
 router.route('/')
+    .get(verifyTransactionAccess, getAccountTransactionsHandler)
     .post(verifyTransactionAccess, createTransactionHandler);
-
-router.route('/period')
-    .get(getTransactionsByPeriodHandler);
-
-router.route('/account/:accountId')
-    .get(verifyTransactionAccess, getAccountTransactionsHandler);
 
 router.route('/:id')
     .get(verifyTransactionAccess, getTransactionByIdHandler)
     .patch(verifyTransactionAccess, updateTransactionHandler)
     .delete(verifyTransactionAccess, deleteTransactionHandler);
+
+router.route('/period')
+    .get(verifyTransactionAccess, getTransactionsByPeriodHandler);
 
 export default router; 

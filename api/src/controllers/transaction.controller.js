@@ -16,11 +16,8 @@ export const createTransactionHandler = async (req, res, next) => {
             throw new AppError('Request body is required', 400);
         }
 
-        const { accountId, value, type, categoryId, date, description } = req.body;
+        const { value, type, categoryId, date, description } = req.body;
         
-        if (!accountId) {
-            throw new AppError('accountId is required', 400);
-        }
         if (!value || typeof value !== 'number') {
             throw new AppError('value must be a valid number', 400);
         }
@@ -29,7 +26,7 @@ export const createTransactionHandler = async (req, res, next) => {
         }
 
         const transactionData = {
-            accountId: parseInt(accountId),
+            accountId: req.accountId,
             value: parseFloat(value),
             type,
             categoryId: categoryId ? parseInt(categoryId) : undefined,
@@ -50,12 +47,8 @@ export const createTransactionHandler = async (req, res, next) => {
 export const getAccountTransactionsHandler = async (req, res, next) => {
     try {
         const userId = req.user.ID;
-        const accountId = parseInt(req.params.accountId);
+        const accountId = req.accountId;
         
-        if (isNaN(accountId)) {
-            throw new AppError('ID da conta inválido.', 400);
-        }
-
         const transactions = await getAccountTransactions(accountId, userId);
         res.status(200).json({
             status: 'sucesso',
@@ -126,13 +119,9 @@ export const deleteTransactionHandler = async (req, res, next) => {
 export const getTransactionsByPeriodHandler = async (req, res, next) => {
     try {
         const userId = req.user.ID;
-        const accountId = parseInt(req.params.accountId);
+        const accountId = req.accountId;
         const { startDate, endDate } = req.query;
         
-        if (isNaN(accountId)) {
-            throw new AppError('ID da conta inválido.', 400);
-        }
-
         const transactions = await getTransactionsByPeriod(accountId, userId, startDate, endDate);
         res.status(200).json({
             status: 'sucesso',

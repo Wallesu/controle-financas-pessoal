@@ -1,11 +1,11 @@
 import pool from '../database/db.js';
 
 export const createCategory = async (userId, name) => {
-    const checkSql = 'SELECT ID FROM Categories WHERE UserId = ? AND Name = ?';
+    const checkSql = 'SELECT ID FROM Categories WHERE (UserId = ? OR UserId IS NULL) AND Name = ?';
     try {
         const [existing] = await pool.query(checkSql, [userId, name]);
         if (existing.length > 0) {
-            throw new Error('Category name already exists for this user.');
+            throw new Error('Category name already exists for this user or globally.');
         }
 
         const insertSql = 'INSERT INTO Categories (UserId, Name) VALUES (?, ?)';
@@ -21,7 +21,7 @@ export const createCategory = async (userId, name) => {
 };
 
 export const getCategoriesByUserId = async (userId) => {
-    const sql = 'SELECT * FROM Categories WHERE UserId = ?';
+    const sql = 'SELECT * FROM Categories WHERE UserId = ? OR UserId IS NULL ORDER BY UserId, Name';
     try {
         const [rows] = await pool.query(sql, [userId]);
         return rows;
@@ -32,7 +32,7 @@ export const getCategoriesByUserId = async (userId) => {
 };
 
 export const getCategoryById = async (categoryId, userId) => {
-    const sql = 'SELECT * FROM Categories WHERE ID = ? AND UserId = ?';
+    const sql = 'SELECT * FROM Categories WHERE ID = ? AND (UserId = ? OR UserId IS NULL)';
     try {
         const [rows] = await pool.query(sql, [categoryId, userId]);
         return rows[0];
@@ -43,14 +43,14 @@ export const getCategoryById = async (categoryId, userId) => {
 };
 
 export const updateCategory = async (categoryId, userId, name) => {
-    const checkSql = 'SELECT ID FROM Categories WHERE UserId = ? AND Name = ? AND ID != ?';
+    const checkSql = 'SELECT ID FROM Categories WHERE (UserId = ? OR UserId IS NULL) AND Name = ? AND ID != ?';
     try {
         const [existing] = await pool.query(checkSql, [userId, name, categoryId]);
         if (existing.length > 0) {
-            throw new Error('Category name already exists for this user.');
+            throw new Error('Category name already exists for this user or globally.');
         }
 
-        const updateSql = 'UPDATE Categories SET Name = ? WHERE ID = ? AND UserId = ?';
+        const updateSql = 'UPDATE Categories SET Name = ? WHERE ID = ? AND (UserId = ? OR UserId IS NULL)';
         const [result] = await pool.query(updateSql, [name, categoryId, userId]);
         if (result.affectedRows === 0) {
             throw new Error('Category not found or unauthorized.');
@@ -66,7 +66,7 @@ export const updateCategory = async (categoryId, userId, name) => {
 };
 
 export const deleteCategory = async (categoryId, userId) => {
-    const sql = 'DELETE FROM Categories WHERE ID = ? AND UserId = ?';
+    const sql = 'DELETE FROM Categories WHERE ID = ? AND (UserId = ? OR UserId IS NULL)';
     try {
         const [result] = await pool.query(sql, [categoryId, userId]);
         if (result.affectedRows === 0) {

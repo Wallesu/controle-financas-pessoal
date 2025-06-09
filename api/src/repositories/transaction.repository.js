@@ -72,7 +72,7 @@ export const getTransactionById = async (transactionId, userId) => {
 };
 
 export const updateTransaction = async (transactionId, userId, updates) => {
-    const allowedUpdates = ['CategoryID', 'Value', 'Type', 'Date', 'Description'];
+    const allowedUpdates = ['categoryId', 'value', 'type', 'date', 'description'];
     const updateFields = Object.keys(updates)
         .filter(key => allowedUpdates.includes(key) && updates[key] !== undefined)
         .map(key => `${key} = ?`);

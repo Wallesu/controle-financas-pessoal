@@ -18,6 +18,6 @@ router.use('/auth', authRoutes);
 
 router.use('/categories', protect, categoryRoutes);
 router.use('/accounts', protect, accountRoutes);
-router.use('/transactions', protect, transactionRoutes);
+router.use('/accounts/:accountId/transactions', protect, transactionRoutes);
 
 export default router; 

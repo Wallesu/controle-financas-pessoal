@@ -39,7 +39,7 @@ export const createTransaction = async (userId, transactionData) => {
             categoryId,
             value,
             type,
-            date: new Date(date),
+            date: typeof date === 'string' ? date.split('T')[0] : new Date(date),
             description
         });
 
@@ -83,6 +83,8 @@ export const updateTransaction = async (transactionId, userId, updateData) => {
     if (type && !['income', 'expense'].includes(type)) {
         throw new AppError('Tipo deve ser "income" (receita) ou "expense" (despesa).', 400);
     }
+
+    if(updateData.date) updateData.date = typeof updateData.date === 'string' ? date.split('T')[0] : new Date(updateData.date)
 
     try {
         const updatedTransaction = await updateTransactionRepo(transactionId, userId, updateData);
