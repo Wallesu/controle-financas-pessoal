@@ -46,7 +46,7 @@ Uma API RESTful para gerenciamento de finanças pessoais, construída com Node.j
      -- Tabela de Categorias
      CREATE TABLE IF NOT EXISTS Categories (
          ID INT AUTO_INCREMENT PRIMARY KEY,
-         UserId INT NOT NULL,
+         UserId INT,
          Name VARCHAR(100) NOT NULL,
          CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
          UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
