@@ -274,7 +274,7 @@ Interface web para o sistema de gerenciamento financeiro, construída com React,
    npm run dev
    ```
 
-A aplicação estará disponível em `http://localhost:5173`.
+A aplicação estará disponível em `http://localhost:3000`.
 
 ## Tecnologias Principais
 
