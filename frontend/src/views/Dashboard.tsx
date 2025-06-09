@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Typography, Box, Paper, CircularProgress, Grid } from '@mui/material';
+import { Container, Typography, Box, Paper, CircularProgress, GridLegacy as Grid } from '@mui/material';
 import type { GridProps } from '@mui/material/Grid';
-import { 
+import {
   PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip,
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   BarChart, Bar
@@ -67,14 +67,11 @@ const Dashboard = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Carregar categorias
         const categoriesData = await categoryService.getAll();
         setCategories(categoriesData);
 
-        // Carregar transações
         const transactions = await transactionService.getAll(Number(accountId));
-        
-        // Processar dados para o gráfico de pizza (gastos por categoria)
+
         const expenses = transactions.filter((t: Transaction) => t.Type === 'expense');
         const categoryTotals = expenses.reduce((acc: { [key: string]: number }, transaction: Transaction) => {
           const category = categoriesData.find((cat: Category) => cat.ID === transaction.CategoryID);
@@ -89,8 +86,7 @@ const Dashboard = () => {
         }));
         setCategoryData(categoryChartData);
 
-        // Processar dados para o gráfico de linha (evolução do saldo)
-        const sortedTransactions = [...transactions].sort((a, b) => 
+        const sortedTransactions = [...transactions].sort((a, b) =>
           new Date(a.Date).getTime() - new Date(b.Date).getTime()
         );
 
@@ -105,7 +101,6 @@ const Dashboard = () => {
         });
         setBalanceData(balanceChartData);
 
-        // Processar dados para o gráfico de barras (receitas x despesas por mês)
         const monthlyTotals = transactions.reduce((acc: MonthlyTotals, transaction: Transaction) => {
           const month = format(parseISO(transaction.Date), 'MMM/yyyy', { locale: ptBR });
           if (!acc[month]) {
@@ -165,7 +160,7 @@ const Dashboard = () => {
   return (
     <>
       <TopBar />
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
+      <Container maxWidth="xl" sx={{ mt: 4, px: 1 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Dashboard
         </Typography>
@@ -177,71 +172,77 @@ const Dashboard = () => {
         )}
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          {/* Gráfico de Pizza - Gastos por Categoria */}
-          <Paper sx={{ p: 3, height: '100%' }}>
-            <Typography variant="h6" gutterBottom>
-              Gastos por Categoria
-            </Typography>
-            <Box sx={{ width: '100%', height: 400 }}>
-              <ResponsiveContainer>
-                <PieChart>
-                  <Pie
-                    data={categoryData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                    outerRadius={150}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {categoryData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    formatter={(value: number) => 
-                      new Intl.NumberFormat('pt-BR', {
-                        style: 'currency',
-                        currency: 'BRL'
-                      }).format(value)
-                    }
-                  />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </Box>
-          </Paper>
+          <Grid container spacing={3}>
+            {/* Gráfico de Pizza - Gastos por Categoria */}
+            <Grid item xs={12} sm={6}>
+              <Paper sx={{ p: 3, height: '100%' }}>
+                <Typography variant="h6" gutterBottom>
+                  Gastos por Categoria
+                </Typography>
+                <Box sx={{ width: '100%', height: 400 }}>
+                  <ResponsiveContainer>
+                    <PieChart>
+                      <Pie
+                        data={categoryData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                        outerRadius={150}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {categoryData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        formatter={(value: number) =>
+                          new Intl.NumberFormat('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL'
+                          }).format(value)
+                        }
+                      />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </Box>
+              </Paper>
+            </Grid>
 
-          {/* Gráfico de Linha - Evolução do Saldo */}
-          <Paper sx={{ p: 3, height: '100%' }}>
-            <Typography variant="h6" gutterBottom>
-              Evolução do Saldo
-            </Typography>
-            <Box sx={{ width: '100%', height: 400 }}>
-              <ResponsiveContainer>
-                <LineChart data={balanceData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip 
-                    formatter={(value: number) => 
-                      new Intl.NumberFormat('pt-BR', {
-                        style: 'currency',
-                        currency: 'BRL'
-                      }).format(value)
-                    }
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="balance" 
-                    stroke="#8884d8" 
-                    name="Saldo"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </Box>
-          </Paper>
+            {/* Gráfico de Linha - Evolução do Saldo */}
+            <Grid item xs={12} sm={6}>
+              <Paper sx={{ p: 3, height: '100%' }}>
+                <Typography variant="h6" gutterBottom>
+                  Evolução do Saldo
+                </Typography>
+                <Box sx={{ width: '100%', height: 400 }}>
+                  <ResponsiveContainer>
+                    <LineChart data={balanceData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" />
+                      <YAxis />
+                      <Tooltip
+                        formatter={(value: number) =>
+                          new Intl.NumberFormat('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL'
+                          }).format(value)
+                        }
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="balance"
+                        stroke="#8884d8"
+                        name="Saldo"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </Box>
+              </Paper>
+            </Grid>
+          </Grid>
 
           {/* Gráfico de Barras - Receitas x Despesas por Mês */}
           <Paper sx={{ p: 3 }}>
@@ -254,8 +255,8 @@ const Dashboard = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip 
-                    formatter={(value: number) => 
+                  <Tooltip
+                    formatter={(value: number) =>
                       new Intl.NumberFormat('pt-BR', {
                         style: 'currency',
                         currency: 'BRL'
@@ -275,4 +276,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;

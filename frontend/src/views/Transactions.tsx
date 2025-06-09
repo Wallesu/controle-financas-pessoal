@@ -124,9 +124,9 @@ const Transactions = () => {
         description,
         categoryId: selectedCategory || undefined,
       });
-      
+
       await loadTransactions();
-      
+
       setOpenDialog(false);
       clearFields();
     } catch (err: any) {
@@ -146,9 +146,9 @@ const Transactions = () => {
         categoryId: selectedCategory || undefined,
         accountId: Number(accountId),
       });
-      
+
       await loadTransactions();
-      
+
       setOpenEditDialog(false);
       setEditingTransaction(null);
       clearFields();
@@ -254,37 +254,95 @@ const Transactions = () => {
                 </Box>
                 <Divider sx={{ mb: 2 }} />
                 {monthTransactions.map((transaction) => (
-                  <Card key={transaction.ID} sx={{ mb: 2 }}>
-                    <CardContent>
-                      <Box display="flex" justifyContent="space-between" alignItems="center">
-                        <Box>
-                          <Typography variant="h6" color={transaction.Type === 'income' ? 'success.main' : 'error.main'}>
-                            {new Intl.NumberFormat('pt-BR', {
-                              style: 'currency',
-                              currency: 'BRL'
-                            }).format(Number(transaction.Value))}
-                          </Typography>
-                          <Typography color="textSecondary">
-                            {format(parseISO(transaction.Date), 'dd/MM/yyyy')}
-                          </Typography>
-                          <Typography>{transaction.Description}</Typography>
-                          <Typography variant="body2" color="textSecondary">
-                            {categories.find(cat => cat.ID === transaction.CategoryID)?.Name || 'Sem categoria'}
-                          </Typography>
+                  <Card
+                    key={transaction.ID}
+                    sx={{
+                      mb: 2,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      height: '100%',
+                      boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.2)', // Sombreamento mais intenso
+                      '&:hover': {
+                        boxShadow: '0px 12px 30px rgba(0, 0, 0, 0.3)', // Efeito ao passar o mouse
+                      },
+                    }}
+                  >
+                    <CardContent sx={{ flex: 1 }}>
+                      <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ flexWrap: 'wrap', gap: 3 }}>
+                        {/* Informações do Transaction */}
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center' }}>
+                          <Box>
+                            <Typography variant="h6" color={transaction.Type === 'income' ? 'success.main' : 'error.main'}>
+                              {new Intl.NumberFormat('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL',
+                              }).format(Number(transaction.Value))}
+                            </Typography>
+                          </Box>
+                          <Box>
+                            <Typography color="textSecondary">
+                              {format(parseISO(transaction.Date), 'dd/MM/yyyy')}
+                            </Typography>
+                          </Box>
+                          <Box>
+                            <Typography>{transaction.Description}</Typography>
+                          </Box>
+                          <Box>
+                            <Typography variant="body2" color="textSecondary">
+                              {categories.find((cat) => cat.ID === transaction.CategoryID)?.Name || 'Sem categoria'}
+                            </Typography>
+                          </Box>
                         </Box>
-                        <Box>
-                          <IconButton
-                            color="primary"
-                            onClick={() => openEditModal(transaction)}
+
+                        {/* Box para os botões de editar e excluir */}
+                        <Box sx={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
+                          {/* Botão de Editar */}
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              backgroundColor: 'primary.main',
+                              width: '48%',  // Ajuste a largura conforme necessário
+                              height: '100%',
+                            }}
                           >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                            color="error"
-                            onClick={() => handleDeleteTransaction(transaction.ID, Number(accountId))}
+                            <IconButton
+                              sx={{
+                                color: 'white',
+                                '&:hover': {
+                                  backgroundColor: 'primary.dark',
+                                },
+                              }}
+                              onClick={() => openEditModal(transaction)}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </Box>
+
+                          {/* Botão de Excluir */}
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              backgroundColor: 'error.main',
+                              width: '48%',  // Ajuste a largura conforme necessário
+                              height: '100%',
+                            }}
                           >
-                            <DeleteIcon />
-                          </IconButton>
+                            <IconButton
+                              sx={{
+                                color: 'white',
+                                '&:hover': {
+                                  backgroundColor: 'error.dark',
+                                },
+                              }}
+                              onClick={() => handleDeleteTransaction(transaction.ID, Number(accountId))}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Box>
                         </Box>
                       </Box>
                     </CardContent>
@@ -295,68 +353,72 @@ const Transactions = () => {
           </Box>
         )}
 
-        <Dialog open={openDialog} onClose={() => {
-          setOpenDialog(false);
-          clearFields();
-        }}>
+        <Dialog 
+          open={openDialog} 
+          onClose={() => {
+            setOpenDialog(false);
+            clearFields();
+          }}
+          maxWidth="sm"
+          fullWidth
+        >
           <DialogTitle>Nova Transação</DialogTitle>
           <DialogContent>
-            <TextField
-              autoFocus
-              margin="dense"
-              label="Valor"
-              type="number"
-              fullWidth
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-            />
-            <FormControl fullWidth>
-              <InputLabel>Tipo</InputLabel>
-              <Select
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1, minWidth: '400px' }}>
+              <TextField
+                autoFocus
+                label="Valor"
+                type="number"
                 fullWidth
-                value={type}
-                onChange={handleTypeChange}
-              >
-                <MenuItem value="income">Receita</MenuItem>
-                <MenuItem value="expense">Despesa</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel>Categoria</InputLabel>
-              <Select
-                value={selectedCategory}
-                label="Categoria"
-                onChange={handleCategoryChange}
-              >
-                <MenuItem value="">
-                  <em>Nenhuma</em>
-                </MenuItem>
-                {categories.map((category) => (
-                  <MenuItem key={category.ID} value={category.ID}>
-                    {category.Name}
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+              <FormControl fullWidth>
+                <InputLabel>Tipo</InputLabel>
+                <Select
+                  fullWidth
+                  value={type}
+                  onChange={handleTypeChange}
+                >
+                  <MenuItem value="income">Receita</MenuItem>
+                  <MenuItem value="expense">Despesa</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel>Categoria</InputLabel>
+                <Select
+                  value={selectedCategory}
+                  label="Categoria"
+                  onChange={handleCategoryChange}
+                >
+                  <MenuItem value="">
+                    <em>Nenhuma</em>
                   </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <TextField
-              margin="dense"
-              label="Data"
-              type="date"
-              fullWidth
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-            <TextField
-              margin="dense"
-              label="Descrição"
-              type="text"
-              fullWidth
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
+                  {categories.map((category) => (
+                    <MenuItem key={category.ID} value={category.ID}>
+                      {category.Name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TextField
+                label="Data"
+                type="date"
+                fullWidth
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+              <TextField
+                label="Descrição"
+                type="text"
+                fullWidth
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </Box>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setOpenDialog(false)}>Cancelar</Button>
@@ -366,69 +428,73 @@ const Transactions = () => {
           </DialogActions>
         </Dialog>
 
-        <Dialog open={openEditDialog} onClose={() => {
-          setOpenEditDialog(false);
-          setEditingTransaction(null);
-          clearFields();
-        }}>
+        <Dialog 
+          open={openEditDialog} 
+          onClose={() => {
+            setOpenEditDialog(false);
+            setEditingTransaction(null);
+            clearFields();
+          }}
+          maxWidth="sm"
+          fullWidth
+        >
           <DialogTitle>Editar Transação</DialogTitle>
           <DialogContent>
-            <TextField
-              autoFocus
-              margin="dense"
-              label="Valor"
-              type="number"
-              fullWidth
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-            />
-            <FormControl fullWidth>
-              <InputLabel>Tipo</InputLabel>
-              <Select
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1, minWidth: '400px' }}>
+              <TextField
+                autoFocus
+                label="Valor"
+                type="number"
                 fullWidth
-                value={type}
-                onChange={handleTypeChange}
-              >
-                <MenuItem value="income">Receita</MenuItem>
-                <MenuItem value="expense">Despesa</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel>Categoria</InputLabel>
-              <Select
-                value={selectedCategory}
-                label="Categoria"
-                onChange={handleCategoryChange}
-              >
-                <MenuItem value="">
-                  <em>Nenhuma</em>
-                </MenuItem>
-                {categories.map((category) => (
-                  <MenuItem key={category.ID} value={category.ID}>
-                    {category.Name}
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+              <FormControl fullWidth>
+                <InputLabel>Tipo</InputLabel>
+                <Select
+                  fullWidth
+                  value={type}
+                  onChange={handleTypeChange}
+                >
+                  <MenuItem value="income">Receita</MenuItem>
+                  <MenuItem value="expense">Despesa</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel>Categoria</InputLabel>
+                <Select
+                  value={selectedCategory}
+                  label="Categoria"
+                  onChange={handleCategoryChange}
+                >
+                  <MenuItem value="">
+                    <em>Nenhuma</em>
                   </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <TextField
-              margin="dense"
-              label="Data"
-              type="date"
-              fullWidth
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-            <TextField
-              margin="dense"
-              label="Descrição"
-              type="text"
-              fullWidth
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
+                  {categories.map((category) => (
+                    <MenuItem key={category.ID} value={category.ID}>
+                      {category.Name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TextField
+                label="Data"
+                type="date"
+                fullWidth
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+              <TextField
+                label="Descrição"
+                type="text"
+                fullWidth
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </Box>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setOpenEditDialog(false)}>Cancelar</Button>
