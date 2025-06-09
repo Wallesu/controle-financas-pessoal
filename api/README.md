@@ -13,7 +13,7 @@ Uma API RESTful para gerenciamento de finanças pessoais, construída com Node.j
 
 ## Pré-requisitos
 
-- Node.js (v14 ou superior)
+- Node.js (v22.11.0 (LTS))
 - MySQL (v8 ou superior)
 - npm ou yarn
 
