@@ -315,22 +315,6 @@ frontend/
 - Dashboard com gráficos e análises
 - Interface responsiva e moderna
 
-## Scripts Disponíveis
-
-- `npm run dev`: Inicia o servidor de desenvolvimento
-- `npm run build`: Cria a versão de produção
-- `npm run preview`: Visualiza a versão de produção localmente
-- `npm run lint`: Executa o linter
-- `npm run type-check`: Verifica os tipos TypeScript
-
-## Notas de Desenvolvimento
-
-- A aplicação utiliza Vite como bundler
-- O sistema de autenticação é baseado em JWT
-- As rotas protegidas são gerenciadas pelo componente PrivateRoute
-- O tema da aplicação pode ser customizado através do Material-UI
-- A aplicação é totalmente responsiva e funciona em dispositivos móveis
-
 ## Integração com a API
 
 O frontend se comunica com a API através dos endpoints documentados na seção anterior. Certifique-se de que:
