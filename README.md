@@ -266,7 +266,7 @@ Interface web para o sistema de gerenciamento financeiro, construída com React,
    VITE_API_URL=http://localhost:3001/api/v1
    
    # Configurações opcionais
-   VITE_APP_TITLE=Controle Financeiro
+   VITE_APP_TITLE=Saldo Smart
    ```
 
 4. Inicie o servidor de desenvolvimento:

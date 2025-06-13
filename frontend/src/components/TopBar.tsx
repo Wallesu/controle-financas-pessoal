@@ -39,7 +39,7 @@ const TopBar = () => {
             fontWeight: 'bold'
           }}
         >
-          Controle Financeiro
+          Saldo Smart
         </Typography>
         <Box sx={{ flexGrow: 1 }}>
           {accountId && (
